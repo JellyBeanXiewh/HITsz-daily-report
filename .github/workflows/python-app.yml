@@ -4,13 +4,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "15 16 * * *"
+    - cron: "0 0 * * *"
 
 jobs:
-  build:
+  Report:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Start EasyConnect docker
+      - name: Start Easy Connect dockers
         shell: bash
         run: |
           touch ~/.easyconn
@@ -29,11 +30,9 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
-          pip install pysocks
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Check VPN status
+      - name: Check VPN connections status
         shell: bash
         run: |
           docker container ls
@@ -50,4 +49,4 @@ jobs:
           GRADUATING: ${{ secrets.graduating }}
           API_KEY: ${{ secrets.api_key }}
         run: |
-          python report.py "$USERNAME" "$PASSWORD" $GRADUATING -k "$API_KEY"
+          python report.py "$USERNAME" "$PASSWORD" -g="$GRADUATING" -k="$API_KEY" -p
